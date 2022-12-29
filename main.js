@@ -62,6 +62,8 @@ class Snake {
             this.dir = "left";
         } else if (e.key === "d" && this.dir !== "left") {
             this.dir = "right";
+        } else if (e.key === " " || e.key === "space") {
+            this.dir = "idle";
         }
     }
 
@@ -71,7 +73,6 @@ class Snake {
         let lastSeg = { ...this.body[0] };
         for (let i = 0; i < this.body.length; i++) {
             if (i === 0) {
-                console.log("updating head");
                 this.body[i].x += headX;
                 this.body[i].y += headY;
             } else {
