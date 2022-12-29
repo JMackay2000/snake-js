@@ -10,7 +10,7 @@ const canvasHeight = canvasEl.getBoundingClientRect().height;
 
 //system
 let running = false;
-const fps = 10;
+const fps = 15;
 
 const backgroundColour = "black";
 const textColour = "white";
