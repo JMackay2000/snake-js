@@ -17,6 +17,8 @@ const snakeColour = "green";
 const eWidth = 20;
 const eHeight = 20;
 
+let score = 0;
+
 class Apple {
     x = 0;
     y = 0;
@@ -26,13 +28,17 @@ class Apple {
     }
 
     changePosition() {
-        this.x = Math.floor((Math.random() * canvasWidth) / eWidth) * eWidth;
-        this.y = Math.floor((Math.random() * canvasHeight) / eHeight) * eHeight;
+        this.x = Math.floor((Math.random() * canvasWidth) / eWidth);
+        this.y = Math.floor((Math.random() * canvasHeight) / eHeight);
     }
 
     render() {
         ctx.fillStyle = appleColour;
-        ctx.fillRect(this.x, this.y, eWidth, eHeight);
+        ctx.fillRect(this.x * eWidth, this.y * eHeight, eWidth, eHeight);
+    }
+
+    getPosition() {
+        return { x: this.x, y: this.y };
     }
 }
 
@@ -41,12 +47,12 @@ class Snake {
     moveY = 0; //0 = idle, -1 = up, 1 = down
     headX = 0;
     headY = 0;
-    snake = [];
+    body = [];
 
     constructor() {
         this.headX = Math.floor(canvasWidth / 2 / eWidth);
         this.headY = Math.floor(canvasHeight / 2 / eHeight);
-        this.snake = [{ x: this.headX, y: this.headY }];
+        this.body = [{ x: this.headX, y: this.headY }];
     }
 
     move(e) {
@@ -71,15 +77,15 @@ class Snake {
         this.headY += this.moveY;
         for (let i = 0; i < 1; i++) {
             //head, move normally
-            this.snake[i].x = this.headX;
-            this.snake[i].y = this.headY;
+            this.body[i].x = this.headX;
+            this.body[i].y = this.headY;
         }
     }
 
     render() {
         ctx.fillStyle = snakeColour;
-        for (let i = 0; i < this.snake.length; i++) {
-            ctx.fillRect(this.snake[i].x * eWidth, this.snake[i].y * eHeight, eWidth, eHeight)
+        for (let i = 0; i < this.body.length; i++) {
+            ctx.fillRect(this.body[i].x * eWidth, this.body[i].y * eHeight, eWidth, eHeight)
         }
     }
 }
@@ -96,9 +102,21 @@ setInterval(mainLoop, 1000 / fps);
 function mainLoop() {
     running = true;
     clearScreen();
-    apple.render();
     snake.update();
+    for (let i = 0; i < snake.body.length; i++) {
+        if (intersects(snake.body[i], apple.getPosition())) {
+            score += 1;
+            apple.changePosition();
+        }
+    }
+    apple.render();
     snake.render();
+}
+
+function intersects(obj1, obj2) {
+    //check if obj1 intersects with obj2 with bbox collisions
+    return ((obj1.x >= obj2.x) && (obj1.x <= obj2.x))
+        && ((obj1.y >= obj2.y) && (obj1.y <= obj2.y));
 }
 
 function clearScreen() {
