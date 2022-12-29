@@ -57,13 +57,14 @@ const snake = {
         this.dir = "idle";
     },
     move: function (e) {
-        if (e.key === "w" && this.dir !== "down") {
+        const isExtended = this.body.length > 1;
+        if (e.key === "w" && (isExtended ? this.dir !== "down" : true)) {
             this.dir = "up";
-        } else if (e.key === "s" && this.dir !== "up") {
+        } else if (e.key === "s" && (isExtended ? this.dir !== "up" : true)) {
             this.dir = "down";
-        } else if (e.key === "a" && this.dir !== "right") {
+        } else if (e.key === "a" && (isExtended ? this.dir !== "right" : true)) {
             this.dir = "left";
-        } else if (e.key === "d" && this.dir !== "left") {
+        } else if (e.key === "d" && (isExtended ? this.dir !== "left" : true)) {
             this.dir = "right";
         }
     },
