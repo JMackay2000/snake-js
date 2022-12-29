@@ -37,8 +37,8 @@ class Apple {
 }
 
 class Snake {
-    moveX = 0; //0 = idle, 1 = left, 2 = right
-    moveY = 0; //0 = idle, 1 = up, 2 = down
+    moveX = 0; //0 = idle, -1 = left, 1 = right
+    moveY = 0; //0 = idle, -1 = up, 1 = down
     headX = 0;
     headY = 0;
     snake = [];
