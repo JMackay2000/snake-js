@@ -27,6 +27,10 @@ const gridHeight = Math.floor(canvasHeight / eHeight);
 let score = 0;
 let prevScores = [];
 
+//to fix issue where >1 key is registered per frame 
+// which can cause player to collide into themself by "turning around"
+let lastKeyPressed;
+
 const apple = {
     x: 0,
     y: 0,
@@ -147,8 +151,13 @@ function stopGame() {
     gameOverlayEl.style.display = "block";
 }
 
-document.addEventListener("keydown", (e) => {
-    if (e.key === " " || e.key === "space") {
+document.addEventListener("keydown", function (e) {
+    lastKeyPressed = e;
+});
+
+function handleKey() {
+    if (lastKeyPressed === undefined) return;
+    if (lastKeyPressed.key === " " || lastKeyPressed.key === "space") {
         if (!running) {
             startGame();
             running = true;
@@ -157,14 +166,16 @@ document.addEventListener("keydown", (e) => {
             running = false;
         }
     } else {
-        snake.move(e);
+        snake.move(lastKeyPressed);
     }
-})
+    lastKeyPressed = undefined;
+}
 
 setInterval(mainLoop, 1000 / fps);
 
 function mainLoop() {
     clearScreen();
+    handleKey(lastKeyPressed);
     if (running) {
         snake.update();
         apple.render();
