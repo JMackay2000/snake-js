@@ -104,7 +104,7 @@ const snake = {
     },
     addSegment: function () {
         let newSeg = { x: 0, y: 0 };
-        const lastSeg = { ...this.body[this.body.length - 1] };
+        const lastSeg = this.body[this.body.length - 1];
         if (this.dir === "up") {
             newSeg.x = lastSeg.x;
             newSeg.y = lastSeg.y + 1;
