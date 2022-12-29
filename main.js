@@ -26,8 +26,8 @@ class Apple {
     }
 
     changePosition() {
-        this.x = Math.floor(Math.random() * canvasWidth);
-        this.y = Math.floor(Math.random() * canvasHeight);
+        this.x = Math.floor((Math.random() * canvasWidth) / eWidth) * eWidth;
+        this.y = Math.floor((Math.random() * canvasHeight) / eHeight) * eHeight;
     }
 
     render() {
@@ -50,7 +50,6 @@ class Snake {
     }
 
     move(e) {
-        console.log(e.key);
         if (e.key === "w") {
             this.moveY = -1;
             this.moveX = 0;
