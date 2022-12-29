@@ -6,10 +6,28 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snake</title>
+    <link href="style.css" rel="stylesheet">
 </head>
 
 <body>
-    <canvas id="snakeCanvas" width="800px" height="800px"></canvas>
+    <div class="content">
+        <div class="gameBody">
+            <div class="gameHeader">
+                <span id="score">&nbsp;</span>
+                <h6>Snake</h6>
+            </div>
+            <canvas id="snakeCanvas" width="800px" height="800px">
+            </canvas>
+            <div id="gameOverlay">
+                <div id="gameOver"></div>
+                <div id="startAgain">Press space to start</div>
+            </div>
+        </div>
+        <div class="prevScores">
+            <h6>Previous top scores</h6>
+            <ol id="scoreList"></ol>
+        </div>
+    </div>
     <script src="main.js"></script>
 </body>
 

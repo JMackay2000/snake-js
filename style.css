@@ -1,0 +1,44 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+h6 {
+    font-size: 20px;
+}
+
+.content {
+    width: fit-content;
+    height: 100%;
+    display: flex;
+}
+
+.gameBody {
+    width: 800px;
+    height: 825px;
+}
+
+.gameHeader {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 20px;
+    height: 25px;
+    margin: 5px 2px;
+}
+
+/* #snakeCanvas {
+    width: 800px;
+    height: 800px;
+} */
+
+#gameOverlay {
+    position: relative;
+    color: white;
+    top: -70%;
+    left: 40%;
+}
+
+.prevScores {
+    margin: 5px 0 0 20px;
+}

@@ -1,8 +1,12 @@
 const canvasEl = document.getElementById("snakeCanvas");
+const scoreEl = document.getElementById("score");
+const scoreListEl = document.getElementById("scoreList");
+const gameOverEl = document.getElementById("gameOver");
+const gameOverlayEl = document.getElementById("gameOverlay");
 const ctx = canvasEl.getContext("2d");
 
-const canvasWidth = canvasEl.clientWidth;
-const canvasHeight = canvasEl.clientHeight;
+const canvasWidth = canvasEl.getBoundingClientRect().width;
+const canvasHeight = canvasEl.getBoundingClientRect().height;
 
 //system
 let running = false;
@@ -21,6 +25,7 @@ const gridWidth = Math.floor(canvasWidth / eWidth);
 const gridHeight = Math.floor(canvasHeight / eHeight);
 
 let score = 0;
+let prevScores = [];
 
 const apple = {
     x: 0,
@@ -74,14 +79,14 @@ const snake = {
                 this.body[i].y += headY;
                 if ((this.body[i].x < 0 || this.body[i].x > gridWidth)
                     || (this.body[i].y < 0 || this.body[i].y > gridHeight)) {
-                    endGame();
+                    stopGame();
                 }
             } else {
                 let temp = { ...this.body[i] };
                 //check if this position overlaps with the head of the snake
                 // if it does, end game
                 this.body[i] = lastSeg;
-                if (intersects(this.body[i], this.body[0])) endGame();
+                if (intersects(this.body[i], this.body[0])) stopGame();
                 lastSeg = temp;
             }
             if (intersects(this.body[i], apple.getPosition())) {
@@ -117,15 +122,39 @@ const snake = {
     },
 }
 
-function endGame() {
-    running = false;
+function startGame() {
+    snake.init();
+    apple.init();
     score = 0;
+    gameOverlayEl.style.display = "none";
 }
 
+function stopGame() {
+    running = false;
+    prevScores.push(score);
+    prevScores = prevScores.sort((a, b) => b - a).slice(0, 10);
+    const scoreLIEls = [];
+    prevScores.forEach(score => {
+        const liEl = document.createElement("LI");
+        liEl.textContent = score;
+        scoreLIEls.push(liEl)
+    });
+    scoreListEl.replaceChildren(...scoreLIEls)
+    if (score > 0) {
+        gameOverEl.textContent = "Game Over! You scored " + score + " points";
+    }
+    gameOverlayEl.style.display = "block";
+}
 
 document.addEventListener("keydown", (e) => {
     if (e.key === " " || e.key === "space") {
-        running = !running;
+        if (!running) {
+            startGame();
+            running = true;
+        } else {
+            stopGame();
+            running = false;
+        }
     } else {
         snake.move(e);
     }
@@ -139,12 +168,8 @@ function mainLoop() {
         snake.update();
         apple.render();
         snake.render();
-    } else {
-        apple.init();
-        snake.init();
-        ctx.fillStyle = "white";
-        ctx.fillText("Press space to play", canvasWidth / 2 - 50, 100);
     }
+    scoreEl.textContent = `${score} points`
 }
 
 function intersects(obj1, obj2) {
