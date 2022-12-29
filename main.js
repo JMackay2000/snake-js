@@ -6,7 +6,7 @@ const canvasHeight = canvasEl.clientHeight;
 
 //system
 let running = false;
-const fps = 5;
+const fps = 10;
 
 const backgroundColour = "black";
 const textColour = "white";
@@ -17,43 +17,41 @@ const snakeColour = "green";
 const eWidth = 20;
 const eHeight = 20;
 
+const gridWidth = Math.floor(canvasWidth / eWidth);
+const gridHeight = Math.floor(canvasHeight / eHeight);
+
 let score = 0;
 
-class Apple {
-    x = 0;
-    y = 0;
-
-    constructor() {
+const apple = {
+    x: 0,
+    y: 0,
+    init: function () {
         this.changePosition();
-    }
-
-    changePosition() {
-        this.x = Math.floor((Math.random() * canvasWidth) / eWidth);
-        this.y = Math.floor((Math.random() * canvasHeight) / eHeight);
-    }
-
-    render() {
+    },
+    changePosition: function () {
+        this.x = Math.floor((Math.random() * gridWidth));
+        this.y = Math.floor((Math.random() * gridHeight));
+    },
+    render: function () {
         ctx.fillStyle = appleColour;
         ctx.fillRect(this.x * eWidth, this.y * eHeight, eWidth, eHeight);
-    }
-
-    getPosition() {
+    },
+    getPosition: function () {
         return { x: this.x, y: this.y };
-    }
+    },
 }
 
-class Snake {
-    dir = "idle"; // idle, up, down, left, right
-    body = [];
-
-    constructor() {
+const snake = {
+    dir: "idle", // idle, up, down, left, right
+    body: [],
+    init: function () {
         this.body = [{
-            x: Math.floor(canvasWidth / 2 / eWidth),
-            y: Math.floor(canvasHeight / 2 / eHeight)
+            x: gridWidth / 2,
+            y: gridHeight / 2
         }];
-    }
-
-    move(e) {
+        this.dir = "idle";
+    },
+    move: function (e) {
         if (e.key === "w" && this.dir !== "down") {
             this.dir = "up";
         } else if (e.key === "s" && this.dir !== "up") {
@@ -62,35 +60,44 @@ class Snake {
             this.dir = "left";
         } else if (e.key === "d" && this.dir !== "left") {
             this.dir = "right";
-        } else if (e.key === " " || e.key === "space") {
-            this.dir = "idle";
         }
-    }
-
-    update() {
+    },
+    update: function () {
         const headX = this.dir === "left" ? -1 : this.dir === "right" ? 1 : 0;
         const headY = this.dir === "up" ? -1 : this.dir === "down" ? 1 : 0;
-        let lastSeg = { ...this.body[0] };
+        let lastSeg;
         for (let i = 0; i < this.body.length; i++) {
             if (i === 0) {
+                //move head
+                lastSeg = { ...this.body[i] };
                 this.body[i].x += headX;
                 this.body[i].y += headY;
+                if ((this.body[i].x < 0 || this.body[i].x > gridWidth)
+                    || (this.body[i].y < 0 || this.body[i].y > gridHeight)) {
+                    endGame();
+                }
             } else {
                 let temp = { ...this.body[i] };
+                //check if this position overlaps with the head of the snake
+                // if it does, end game
                 this.body[i] = lastSeg;
+                if (intersects(this.body[i], this.body[0])) endGame();
                 lastSeg = temp;
             }
+            if (intersects(this.body[i], apple.getPosition())) {
+                score++;
+                this.addSegment();
+                apple.changePosition();
+            }
         }
-    }
-
-    render() {
+    },
+    render: function () {
         ctx.fillStyle = snakeColour;
         for (let i = 0; i < this.body.length; i++) {
             ctx.fillRect(this.body[i].x * eWidth, this.body[i].y * eHeight, eWidth, eHeight)
         }
-    }
-
-    addSegment() {
+    },
+    addSegment: function () {
         let newSeg = { x: 0, y: 0 };
         const lastSeg = { ...this.body[this.body.length - 1] };
         if (this.dir === "up") {
@@ -107,32 +114,37 @@ class Snake {
             newSeg.y = lastSeg.y;
         }
         this.body.push(newSeg);
-        console.log(JSON.stringify(this.body));
-    }
+    },
 }
 
-const apple = new Apple();
-const snake = new Snake();
+function endGame() {
+    running = false;
+    score = 0;
+}
+
 
 document.addEventListener("keydown", (e) => {
-    snake.move(e);
+    if (e.key === " " || e.key === "space") {
+        running = !running;
+    } else {
+        snake.move(e);
+    }
 })
 
 setInterval(mainLoop, 1000 / fps);
 
 function mainLoop() {
-    running = true;
     clearScreen();
-    snake.update();
-    for (let i = 0; i < snake.body.length; i++) {
-        if (intersects(snake.body[i], apple.getPosition())) {
-            score += 1;
-            apple.changePosition();
-            snake.addSegment();
-        }
+    if (running) {
+        snake.update();
+        apple.render();
+        snake.render();
+    } else {
+        apple.init();
+        snake.init();
+        ctx.fillStyle = "white";
+        ctx.fillText("Press space to play", canvasWidth / 2 - 50, 100);
     }
-    apple.render();
-    snake.render();
 }
 
 function intersects(obj1, obj2) {
