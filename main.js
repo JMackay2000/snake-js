@@ -132,6 +132,7 @@ function startGame() {
     apple.init();
     score = 0;
     gameOverlayEl.style.display = "none";
+    running = true;
 }
 
 function stopGame() {
@@ -160,10 +161,8 @@ function handleKey() {
     if (lastKeyPressed.key === " " || lastKeyPressed.key === "space") {
         if (!running) {
             startGame();
-            running = true;
         } else {
             stopGame();
-            running = false;
         }
     } else {
         snake.move(lastKeyPressed);
