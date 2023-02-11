@@ -108,22 +108,10 @@ const snake = {
         }
     },
     addSegment: function () {
-        let newSeg = { x: 0, y: 0 };
         const lastSeg = this.body[this.body.length - 1];
-        if (this.dir === "up") {
-            newSeg.x = lastSeg.x;
-            newSeg.y = lastSeg.y + 1;
-        } else if (this.dir === "down") {
-            newSeg.x = lastSeg.x;
-            newSeg.y = lastSeg.y - 1;
-        } else if (this.dir === "left") {
-            newSeg.x = lastSeg.x + 1;
-            newSeg.y = lastSeg.y;
-        } else if (this.dir === "right") {
-            newSeg.x = lastSeg.x - 1;
-            newSeg.y = lastSeg.y;
-        }
-        this.body.push(newSeg);
+        const dirX = this.dir === "left" ? -1 : this.dir === "right" ? 1 : 0;
+        const dirY = this.dir === "up" ? -1 : this.dir === "down" ? 1 : 0;
+        this.body.push({ x: lastSeg.x + dirX, y: lastSeg.y + dirY });
     },
 }
 
