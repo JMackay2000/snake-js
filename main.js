@@ -62,13 +62,13 @@ const snake = {
     },
     move: function (e) {
         const isExtended = this.body.length > 1;
-        if (e.key === "w" && (isExtended ? this.dir !== "down" : true)) {
+        if (e.key === "w" && (!isExtended || this.dir !== "down")) {
             this.dir = "up";
-        } else if (e.key === "s" && (isExtended ? this.dir !== "up" : true)) {
+        } else if (e.key === "s" && (!isExtended || this.dir !== "up")) {
             this.dir = "down";
-        } else if (e.key === "a" && (isExtended ? this.dir !== "right" : true)) {
+        } else if (e.key === "a" && (!isExtended || this.dir !== "right")) {
             this.dir = "left";
-        } else if (e.key === "d" && (isExtended ? this.dir !== "left" : true)) {
+        } else if (e.key === "d" && (!isExtended || this.dir !== "left")) {
             this.dir = "right";
         }
     },
